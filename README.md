@@ -1,0 +1,2 @@
+# SoftComputing_interimreport
+ソフトコンピューティングの中間レポート用のレポジトリです
