@@ -32,8 +32,12 @@ public class Gene {
         return route;
     }
 
-    public int getRoute(int n) {
-        return route[n];
+    public int getRoute(int i) {
+        return route[i];
+    }
+
+    public void setRoute(int i,int n){
+        route[i]=n;
     }
 
     public Gene intersection(Gene parentA, Gene parentB, int n) {// n=0||n=1
@@ -71,5 +75,18 @@ public class Gene {
         }else{
             return new Gene(routeB);
         }
+    }
+
+    public void mutation(){
+        Random rand = new Random();
+        int n,m;
+        do{
+            n=rand.nextInt(num_data);
+            m=rand.nextInt(num_data);
+        }while(n!=m);
+        int box;
+        box=route[n];
+        route[n]=route[m];
+        route[m]=box;
     }
 }
