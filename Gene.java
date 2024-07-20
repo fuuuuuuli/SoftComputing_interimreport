@@ -1,31 +1,46 @@
 import java.util.Random;
-
+import java.util.Arrays;
 public class Gene {
     int[] route;
     int num_data;
+    double score;
+    Data data = new Data();
+    City[] city = new City[281];
 
     Gene() {
-        Data data = new Data();
+        for (int i = 1; i < city.length; i++) {
+            city[i] = new City(data.getData(i));
+        }
         num_data = data.getnumData();
         route = new int[num_data];
         boolean[] routeBookingCheck = new boolean[num_data + 1];
         Random rand = new Random();
         for (int i = 0; i < num_data; i++) {
             int selectedCity = rand.nextInt(num_data - i);
-            for (int j = 1; j < num_data + 1; i++) {
+            for (int j = 1; j < num_data + 1; j++) {
                 if (!routeBookingCheck[j]) {
-                    selectedCity--;
-                }
-                if (selectedCity == 0) {
-                    route[i] = j;
-                    routeBookingCheck[j] = true;
+                    // System.out.println("i="+i+",j="+j+",selectedCity="+selectedCity);
+                    if(selectedCity>0){
+                        selectedCity--;
+                    }
+                    if (selectedCity == 0) {
+                        // System.out.println("    i="+i+",j="+j);
+                        route[i] = j;
+                        routeBookingCheck[j] = true;
+                        break;
+                    }
                 }
             }
         }
+        calculateScore();
     }
 
     Gene(int[] route) {
+        for (int i = 1; i < city.length; i++) {
+            city[i] = new City(data.getData(i));
+        }
         this.route = route;
+        calculateScore();
     }
 
     public int[] getRoute() {
@@ -40,16 +55,20 @@ public class Gene {
         route[i] = n;
     }
 
-    public Gene intersection(Gene parentA, Gene parentB, int n) {// n=0||n=1
+    public int getNumData(){
+        return num_data;
+    }
+
+    public static Gene intersection(Gene parentA, Gene parentB, int q0,int n) {// n=0||n=1
         int[] routeA, routeB;
+        int num_data = parentA.getNumData();
         routeA = parentA.getRoute();
         routeB = parentB.getRoute();
         boolean[] change = new boolean[num_data];
-        Random rand = new Random();
         int[] q = new int[num_data];
         int[] k = new int[num_data];
         int box;
-        q[0] = rand.nextInt(num_data);
+        q[0] = q0;
         for (int i = 0; true; i++) {
             for (int j = 0; j < num_data; j++) {
                 if (parentA.getRoute(j) == q[i]) {
@@ -81,12 +100,58 @@ public class Gene {
         Random rand = new Random();
         int n, m;
         do {
+            System.out.println(num_data);
             n = rand.nextInt(num_data);
             m = rand.nextInt(num_data);
-        } while (n != m);
-        int box;
-        box = route[n];
-        route[n] = route[m];
-        route[m] = box;
+        } while (n >= m);   //nがmよりも小さいと終了
+
+        int n_end,m_end;
+        n_end = rand.nextInt(m-n)+n;
+        m_end = rand.nextInt(num_data-m)+m;
+        int[] first_array,n_array,middle_array,m_array,final_array;
+        first_array=Arrays.copyOfRange(route, 0, n);
+        n_array=Arrays.copyOfRange(route,n,n+n_end+1);
+        middle_array=Arrays.copyOfRange(route,n+n_end+1,m);
+        m_array=Arrays.copyOfRange(route,m,m+m_end+1);
+        final_array=Arrays.copyOfRange(route,m+m_end+1,route.length);
+        while(true){
+            int i=0;
+            if(i<first_array.length){
+                route[i]=first_array[i];
+            }else if(i<first_array.length+m_array.length){
+                route[i]=m_array[i-first_array.length];
+            }else if(i<first_array.length+m_array.length+middle_array.length){
+                route[i]=middle_array[i-(first_array.length+m_array.length)];
+            }else if(i<first_array.length+m_array.length+middle_array.length+n_array.length){
+                route[i]=n_array[i-(first_array.length+m_array.length+middle_array.length)];
+            }else if(i<first_array.length+m_array.length+middle_array.length+n_array.length+final_array.length){
+                route[i]=final_array[i-(first_array.length+m_array.length+middle_array.length+n_array.length)];
+            }else if(i>=first_array.length+m_array.length+middle_array.length+n_array.length+final_array.length){
+                break;
+            }
+        }
+        calculateScore();
+    }
+
+    public void setScore(int n) {
+        score = n;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void calculateScore() {
+        score = 0;
+        for (int i = 0; i < num_data - 1; i++) {
+            score += Math.sqrt(Math.pow(city[route[i]].getX() - city[route[i + 1]].getX(), 2)
+                    + Math.pow(city[route[i]].getY() - city[route[i + 1]].getY(), 2));
+        }
+    }
+
+    public void printRoute(){
+        for(int i=0;i<num_data;i++){
+            System.out.println("route["+i+"]="+route[i]);
+        }
     }
 }
