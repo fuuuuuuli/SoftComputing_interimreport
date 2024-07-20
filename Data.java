@@ -2,7 +2,8 @@ import java.io.*;
 
 
 public class Data {
-    int[][] Node = new int[281][3];
+    final int num_data=280;
+    int[][] Node = new int[num_data+1][3];
     Data() {
         try {
             FileReader fr = new FileReader("a280.tsp");
@@ -39,8 +40,16 @@ public class Data {
     }
 
     public void printData(){
-        for(int i=0;i<281;i++){
+        for(int i=0;i<num_data+1;i++){
             System.out.println(Node[i][0]+","+Node[i][1]+","+Node[i][2]);
         }
+    }
+
+    public int[] getData(int i){
+        return Node[i];
+    }
+
+    public int getnumData(){
+        return num_data; 
     }
 }
