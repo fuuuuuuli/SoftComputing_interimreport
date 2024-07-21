@@ -66,7 +66,7 @@ public class Ga {
                     nextgene[i].mutation();
                 }
             }
-            for (int i = 0; i < num_gene; i++) {
+            for (int i = 0; i < num_gene; i++) {                                    //Geneオブジェクトの更新
                 gene[i]=nextgene[i];
             }
 
