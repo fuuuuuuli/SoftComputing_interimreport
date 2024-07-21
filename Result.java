@@ -4,6 +4,8 @@ public class Result {
     final private int num_gene;
     final private int hand_over;
     double[] Best_score;
+    FileWriter fw;
+    BufferedWriter bw;
 
     Result() {
         num_generation = 5000;
@@ -29,6 +31,18 @@ public class Result {
     }
 
     public void fileOutput(){
+        try {
+            fw = new FileWriter("result.csv");
+            bw = new BufferedWriter(fw);
+            for(int i=1;i<=num_generation;i++){
+                bw.write(i+","+Best_score[i-1]+"\n");
+                bw.flush();
+            }
+            bw.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            System.out.println("Exceprion:"+e);
+        }
     }
 
 }
