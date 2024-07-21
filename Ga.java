@@ -7,52 +7,54 @@ public class Ga {
         Result result = new Result();
         final int num_generation = result.getNumGeneration();
         final int num_gene = result.getNumGene();
-        Gene[][] gene = new Gene[num_generation][num_gene];
+        Gene[] gene = new Gene[num_gene];
+        Gene[] nextgene = new Gene[num_gene];
         for (int i = 0; i < num_gene; i++) {
-            gene[0][i] = new Gene();
+            gene[i] = new Gene();
         }
 
         for (int generation = 0; generation < num_generation; generation++) {
             
             Gene box;
             for (int i = 0; i < num_gene; i++) {                                    // 遺伝子を優秀な順に並び替え
-                for (int j = i; j < num_gene - 1; j++) {
-                    if(i<3){
-                        System.out.println("i="+i+",j="+j+",gene[generation][j].getScore()="+gene[generation][j].getScore()+",gene[generation][j+1].getScore()="+gene[generation][j+1].getScore());
-                    }
-                    if (gene[generation][j].getScore() > gene[generation][j + 1].getScore()) {
-                        if(i<3){
-                            System.out.println("入れ替え発生");
-                        }
-                        box = gene[generation][j];
-                        gene[generation][j] = gene[generation][j + 1];
-                        gene[generation][j + 1] = box;
+                for (int j = 0; j < num_gene - 1-i; j++) {
+                    // if(i<3){
+                    //     // System.out.println("i="+i+",j="+j+",gene[j].getScore()="+gene[j].getScore()+",gene[j+1].getScore()="+gene[j+1].getScore());
+                    // }
+                    if (gene[j].getScore() > gene[j + 1].getScore()) {
+                        // if(i<3){
+                        //     // System.out.println("入れ替え発生");
+                        // }
+                        box = gene[j];
+                        gene[j] = gene[j + 1];
+                        gene[j + 1] = box;
                     }
                 }
             }
-            System.out.println("第"+generation+"世代："+gene[generation][0].getScore());
-            for(int i=0;i<num_gene;i++){
-                System.out.println("第"+generation+"世代：No."+i+":"+gene[generation][i].getScore());
-            }
-            System.out.println();
-            result.setBest_score(generation, gene[generation][0].getScore());       //結果を記録
+            System.out.printf("第%4d世代：%f\n",generation,gene[0].getScore());
+            // System.out.println("第"+generation+"世代："+gene[0].getScore());
+            // for(int i=0;i<num_gene;i++){
+            //     System.out.println("第"+generation+"世代：No."+i+":"+gene[i].getScore());
+            // }
+            // System.out.println();
+            result.setBest_score(generation, gene[0].getScore());       //結果を記録
 
             final int hand_over = result.getHandOver();
             Random rand = new Random();
             int parentA, parentB, q;
             for (int i = 0; i < hand_over; i++) {                                   //エリートを引き継ぎ
-                gene[generation + 1][i] = gene[generation][i];
+                nextgene[i] = gene[i];
             }
 
             for (int i = hand_over; i < num_gene; i++) {                            //交叉
                 parentA = rand.nextInt(hand_over);
                 parentB = rand.nextInt(hand_over);
                 q = rand.nextInt(data.getnumData());
-                gene[generation + 1][i] = Gene.intersection(gene[generation][parentA],
-                        gene[generation][parentB], q, 0);
+                nextgene[i] = Gene.intersection(gene[parentA],
+                        gene[parentB], q, 0);
                 i++;
-                gene[generation + 1][i] = Gene.intersection(gene[generation][parentA],
-                        gene[generation][parentB], q, 1);
+                nextgene[i] = Gene.intersection(gene[parentA],
+                        gene[parentB], q, 1);
             }
 
             boolean[] mutation = new boolean[num_gene];                             //突然変異
@@ -61,9 +63,13 @@ public class Ga {
             }
             for (int i = 0; i < num_gene; i++) {
                 if (mutation[i]) {
-                    gene[generation + 1][i].mutation();
+                    nextgene[i].mutation();
                 }
             }
+            for (int i = 0; i < num_gene; i++) {
+                gene[i]=nextgene[i];
+            }
+
         }
 
     }

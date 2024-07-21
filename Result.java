@@ -6,7 +6,7 @@ public class Result {
     double[] Best_score;
 
     Result() {
-        num_generation = 1;
+        num_generation = 5000;
         num_gene = 100;
         hand_over = 10;
         Best_score = new double[num_generation];
