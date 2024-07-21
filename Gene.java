@@ -40,6 +40,7 @@ public class Gene {
             city[i] = new City(data.getData(i));
         }
         this.route = route;
+        num_data = data.getnumData();
         calculateScore();
     }
 
@@ -69,7 +70,7 @@ public class Gene {
         int[] k = new int[num_data];
         int box;
         q[0] = q0;
-        for (int i = 0; true; i++) {
+        for (int i = 0; i<num_data-1; i++) {            //交叉
             for (int j = 0; j < num_data; j++) {
                 if (parentA.getRoute(j) == q[i]) {
                     k[i] = j;
@@ -100,22 +101,25 @@ public class Gene {
         Random rand = new Random();
         int n, m;
         do {
-            System.out.println(num_data);
+            num_data = data.getnumData();
+            // System.out.println(num_data);
             n = rand.nextInt(num_data);
             m = rand.nextInt(num_data);
         } while (n >= m);   //nがmよりも小さいと終了
 
         int n_end,m_end;
-        n_end = rand.nextInt(m-n)+n;
-        m_end = rand.nextInt(num_data-m)+m;
+        n_end = rand.nextInt(m-n);
+        m_end = rand.nextInt(num_data-m);
         int[] first_array,n_array,middle_array,m_array,final_array;
+        // System.out.println("n="+n+",m="+m);
+        // System.out.println("n_end="+n_end+",m_end="+m_end);
         first_array=Arrays.copyOfRange(route, 0, n);
         n_array=Arrays.copyOfRange(route,n,n+n_end+1);
         middle_array=Arrays.copyOfRange(route,n+n_end+1,m);
         m_array=Arrays.copyOfRange(route,m,m+m_end+1);
         final_array=Arrays.copyOfRange(route,m+m_end+1,route.length);
+        int i=0;
         while(true){
-            int i=0;
             if(i<first_array.length){
                 route[i]=first_array[i];
             }else if(i<first_array.length+m_array.length){
@@ -129,6 +133,7 @@ public class Gene {
             }else if(i>=first_array.length+m_array.length+middle_array.length+n_array.length+final_array.length){
                 break;
             }
+            i++;
         }
         calculateScore();
     }

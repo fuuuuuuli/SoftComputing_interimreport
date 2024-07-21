@@ -13,10 +13,17 @@ public class Ga {
         }
 
         for (int generation = 0; generation < num_generation; generation++) {
+            
             Gene box;
             for (int i = 0; i < num_gene; i++) {                                    // 遺伝子を優秀な順に並び替え
                 for (int j = i; j < num_gene - 1; j++) {
+                    if(i<3){
+                        System.out.println("i="+i+",j="+j+",gene[generation][j].getScore()="+gene[generation][j].getScore()+",gene[generation][j+1].getScore()="+gene[generation][j+1].getScore());
+                    }
                     if (gene[generation][j].getScore() > gene[generation][j + 1].getScore()) {
+                        if(i<3){
+                            System.out.println("入れ替え発生");
+                        }
                         box = gene[generation][j];
                         gene[generation][j] = gene[generation][j + 1];
                         gene[generation][j + 1] = box;
@@ -24,6 +31,10 @@ public class Ga {
                 }
             }
             System.out.println("第"+generation+"世代："+gene[generation][0].getScore());
+            for(int i=0;i<num_gene;i++){
+                System.out.println("第"+generation+"世代：No."+i+":"+gene[generation][i].getScore());
+            }
+            System.out.println();
             result.setBest_score(generation, gene[generation][0].getScore());       //結果を記録
 
             final int hand_over = result.getHandOver();
